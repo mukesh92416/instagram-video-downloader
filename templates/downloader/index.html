@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Instagram Video Downloader</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+<div class="container">
+    <h1>Instagram Video Downloader</h1>
+    <p class="subtitle">Download Insta Videos</p>
+
+    <!-- PREVIEW FORM -->
+    <form method="POST">
+        {% csrf_token %}
+        <input type="url" name="url" placeholder="Paste Instagram link"
+               required value="{{ url|default:'' }}">
+       <button type="submit" name="preview" onclick="showLoader()">Preview</button>
+
+
+    <!-- PREVIEW RESULT -->
+    {% if preview %}
+        <div class="preview-box">
+            <img src="{{ preview.thumbnail }}" alt="Preview image">
+            <p>{{ preview.title }}</p>
+
+            <!-- DOWNLOAD FORM -->
+            <form method="POST">
+                {% csrf_token %}
+              <a href="/download/?url={{ url }}" class="download-btn" onclick="showLoader()">
+    Download Now
+</a>
+
+
+
+            </form>
+            <!-- LOADER -->
+<div id="loader" class="loader hidden">
+    <div class="spinner"></div>
+    <p id="loaderText">Preparing download…</p>
+
+
+    <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
+</div>
+
+        </div>
+    {% endif %}
+
+    {% if success %}
+        <p class="success">{{ success }}</p>
+    {% endif %}
+
+    {% if error %}
+        <p class="error">{{ error }}</p>
+    {% endif %}
+</div>
+<script>
+function showLoader() {
+    const loader = document.getElementById("loader");
+    const progress = document.getElementById("progressFill");
+    const circle = document.querySelector(".circle");
+    const text = document.getElementById("loaderText");
+
+    if (loader) {
+        loader.classList.remove("hidden");
+    }
+
+    // Reset text
+    if (text) {
+        text.textContent = "Preparing download…";
+    }
+
+    // Restart progress bar animation
+    if (progress) {
+        progress.style.animation = "none";
+        progress.offsetHeight;
+        progress.style.animation = "progressFast 2.2s ease-out forwards";
+    }
+
+    // Restart circle fill animation
+    if (circle) {
+        circle.style.animation = "none";
+        circle.offsetHeight;
+        circle.style.animation = "fillCircle 2.2s ease-out forwards";
+    }
+
+    // 🔑 Change text when animation finishes
+    setTimeout(() => {
+        if (text) {
+            text.textContent = "Your Download is Ready";
+        }
+    }, 2200); // same as animation duration
+}
+</script>
+
+</body>
+</html>
